@@ -29,3 +29,28 @@ function cms2cms_block_info() {
     );
     return $blocks;
 }
+
+/**
+ * Implements hook_contents().
+ */
+function cms2cms_contents() {
+    return "cms2cms_contents";
+}
+
+/**
+ * Implements hook_menu().
+ */
+function current_posts_menu() {
+    $items = array();
+
+    $items['admin/config/content/cms2cms'] = array(
+        'title' => 'cms2cms automated cms migration',
+        'description' => 'Configuration for Current posts module',
+        'page callback' => 'drupal_get_form',
+        'page arguments' => array('cms2cms'),
+        'access arguments' => array('access administration pages'),
+        'type' => MENU_NORMAL_ITEM,
+    );
+
+    return $items;
+}
