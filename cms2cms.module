@@ -9,7 +9,8 @@
  * @param arg
  *   Array that holds the current path as returned from arg() function
  */
-function cms2cms_help($path, $arg) {
+function cms2cms_help($path, $arg)
+{
     switch ($path) {
         case "admin/help#cms2cms":
             return '<p>' . t("Automated cms migration") . '</p>';
@@ -17,30 +18,20 @@ function cms2cms_help($path, $arg) {
     }
 }
 
-/**
- * Implements hook_block_info().
- */
-function cms2cms_block_info() {
-    $blocks['cms2cms'] = array(
-        // The name that will appear in the block list.
-        'info' => t('CMS2CMS automated cms migration'),
-        // Default setting.
-        'cache' => DRUPAL_CACHE_PER_ROLE,
-    );
-    return $blocks;
-}
 
 /**
  * Implements hook_contents().
  */
-function cms2cms_contents() {
+function cms2cms_contents()
+{
     return "cms2cms_contents";
 }
 
 /**
  * Implements hook_menu().
  */
-function current_posts_menu() {
+function cms2cms_menu()
+{
     $items = array();
 
     $items['admin/config/content/cms2cms'] = array(
@@ -49,8 +40,22 @@ function current_posts_menu() {
         'page callback' => 'drupal_get_form',
         'page arguments' => array('cms2cms'),
         'access arguments' => array('access administration pages'),
-        'type' => MENU_NORMAL_ITEM,
+        'type' => MENU_CONTEXT_PAGE,
     );
 
     return $items;
+}
+
+function cms2cms_form($form, &$form_state)
+{
+    $form['cms2cms_max'] = array(
+        '#type' => 'textfield',
+        '#title' => t('Maximum number of posts'),
+        '#default_value' => 3,
+        '#size' => 2,
+        '#maxlength' => 2,
+        '#description' => t('The maximum number of links to display in the block.'),
+        '#required' => TRUE,
+    );
+    return system_settings_form($form);
 }
