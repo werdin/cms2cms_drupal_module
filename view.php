@@ -4,22 +4,22 @@ class CmsPluginView
 
     public function _e($message, $domain)
     {
-        return $message. $domain;
+        return  $message;
     }
 
     public function __($message, $domain)
     {
-        return $message. $domain;
+        return $message;
     }
 
     public function getFormTempKey($name)
     {
-        return wp_create_nonce($name);
+        return md5($name);
     }
 
     public function verifyFormTempKey($value, $name)
     {
-        return wp_verify_nonce($value, $name);
+        return $value == md5($name);
     }
 
     public function getAppUrl()

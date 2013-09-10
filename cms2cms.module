@@ -37,6 +37,12 @@ function cms2cms_menu()
         'access arguments' => array('administer access control'),
     );
 
+    $items['admin/cms2cms/save-options'] = array(
+        'title' => 'saveOptions',
+        'page callback' => 'cms2cms_save_options',
+        'access arguments' => array('administer access control'),
+    );
+
     return $items;
 }
 
@@ -44,6 +50,12 @@ function cms2cms_menu()
 function cms2cms_content()
 {
    return  getContent();
+}
+
+function cms2cms_save_options()
+{
+
+    return  'cms2cms_save_options';
 }
 
 

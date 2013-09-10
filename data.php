@@ -1,7 +1,6 @@
 <?php
 class CmsPluginData
 {
-
     const CMS2CMS_OPTION_TABLE = 'cms2cms_options';
 
     public function getUserEmail()
@@ -14,12 +13,13 @@ class CmsPluginData
     public function getSiteUrl()
     {
         global $base_url;
+
         return $base_url;
     }
 
     public function getOption($name)
     {
-       return  variable_get($name);
+        return variable_get($name);
     }
 
     public function setOption($name, $value)
@@ -29,14 +29,13 @@ class CmsPluginData
 
     public function deleteOption($name)
     {
-      variable_del($name);
+        variable_del($name);
     }
 
     public function getFrontUrl()
     {
-       return $this->getSiteUrl() .'/' . $this->getBridgeUrl();
+        return $this->getSiteUrl() . '/' . $this->getBridgeUrl();
     }
-
 
     public function getBridgeUrl()
     {
@@ -61,7 +60,6 @@ class CmsPluginData
 
         return ($cms2cms_access_key != false);
     }
-
 
     public function getOptions()
     {
@@ -91,7 +89,6 @@ class CmsPluginData
         $bridge_depth = explode(DIRECTORY_SEPARATOR, $bridge_depth);
         $bridge_depth = count($bridge_depth);
 
-
         $response = array(
             'errors' => _('Provided credentials are not correct: ' . $key . ' = ' . $login)
         );
@@ -120,6 +117,5 @@ class CmsPluginData
         $this->deleteOption('cms2cms-key');
         $this->deleteOption('cms2cms-depth');
     }
-
 
 }

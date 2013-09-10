@@ -12,6 +12,7 @@
                         accessKey: data.accessKey,
                         login: data.email
                     };
+
                     $.post(ajaxurl, action_data, function(data) {
                         eval('data = ' + data);
                         if ( !data.errors ) {
@@ -197,7 +198,7 @@
 
             // Change tabs Register and Login
             var signInTabs = cms2cmsBlock.find('a.nav-tab');
-            signInTabs.on('click', function(e) {
+            signInTabs.bind('click', function(e) {
                 if ( !$(this).hasClass('cms2cms-real-link') ) {
                     e.preventDefault();
                     var activeClass = 'nav-tab-active';
@@ -210,7 +211,7 @@
             });
 
             // Assign forms to JSONP
-            cms2cmsBlock.find('form').on('submit', function(e) {
+            cms2cmsBlock.find('form').bind('submit', function(e) {
                 var callback =  $(this).attr('callback');
                 var validate =  $(this).attr('validate');
 
