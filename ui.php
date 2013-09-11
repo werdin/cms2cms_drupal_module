@@ -1,9 +1,6 @@
 <?php
 
-require_once(drupal_get_path('module', 'cms2cms') . '/data.php');
-require_once(drupal_get_path('module', 'cms2cms') . '/view.php');
-
-function getContent()
+function get_view_content()
 {
     drupal_add_css(drupal_get_path('module', 'cms2cms') . '/css/cms2cms.css');
     drupal_add_js(drupal_get_path('module', 'cms2cms') . '/js/cms2cms.js');
@@ -11,6 +8,15 @@ function getContent()
 
     $dataProvider = new CmsPluginData();
     $viewProvider = new CmsPluginView();
+    if (isset($_REQUEST['_wpnonce']) && !empty($_POST['cms2cms_logout'])) {
+
+        $nonce = $_REQUEST['_wpnonce'];
+        if ($viewProvider->verifyFormTempKey($nonce, 'cms2cms_logout')
+            && $_POST['cms2cms_logout'] == 1
+        ) {
+            $dataProvider->clearOptions();
+        }
+    }
 
     $cms2cms_access_key = $dataProvider->getOption('cms2cms-key');
     $cms2cms_is_activated = $dataProvider->isActivated();
@@ -20,8 +26,6 @@ function getContent()
 
     $cms2cms_authentication = $dataProvider->getAuthData();
     $cms2cms_download_bridge = $viewProvider->getDownLoadBridgeUrl($cms2cms_authentication);
-
-//    $cms2cms_ajax_nonce = $viewProvider->getFormTempKey('cms2cms-ajax-security-check');
 
     $content = '<div class="wrap">
 

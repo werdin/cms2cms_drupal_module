@@ -2,12 +2,12 @@
 class CmsPluginView
 {
 
-    public function _e($message, $domain)
+    public function _e($message)
     {
         return  $message;
     }
 
-    public function __($message, $domain)
+    public function __($message)
     {
         return $message;
     }

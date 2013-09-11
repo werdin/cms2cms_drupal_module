@@ -13,8 +13,8 @@
                         login: data.email
                     };
 
-                    $.post(ajaxurl, action_data, function(data) {
-                        eval('data = ' + data);
+                    $.post('cms2cms/save-options', action_data, function(data) {
+//                        eval('data = ' + data);
                         if ( !data.errors ) {
                             // reload page to change form and show logout link
                             //location.reload();
@@ -124,8 +124,10 @@
                     action: 'cms2cms_get_options',
                     serialized: serialized
                 };
-                $.post(ajaxurl, action_data, function(data) {
-                    eval('data = ' + data);
+                $.post('cms2cms/cms2cms-get-options', action_data, function(data) {
+//                    eval('data = ' + data);
+
+                    console.log(data);
                     if ( !data.errors ) {
                         if ( data.accessKey == '' ) {
                             cms2cms.authentication = '';
@@ -152,7 +154,7 @@
                     cms2cms_key: key
                 };
 
-                $.post(ajaxurl, action_data, function(data) {});
+                $.post('cms2cms/cms2cms-save-options', action_data, function(data) {});
             },
 
             // get data via JSONP
