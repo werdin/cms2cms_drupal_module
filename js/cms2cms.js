@@ -124,7 +124,7 @@
                     action: 'cms2cms_get_options',
                     serialized: serialized
                 };
-                $.post('cms2cms/cms2cms-get-options', action_data, function(data) {
+                $.post('cms2cms/get-options', action_data, function(data) {
 //                    eval('data = ' + data);
 
                     console.log(data);
@@ -133,7 +133,6 @@
                             cms2cms.authentication = '';
                         }
                         else {
-                            data = JSON.stringify(data);
                             cms2cms.authentication = encodeURIComponent(data);
                             if ( typeof(callback) == 'function' ) {
                                 callback();

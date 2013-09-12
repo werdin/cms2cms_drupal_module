@@ -14,7 +14,6 @@ require_once(drupal_get_path('module', 'cms2cms') . '/data.php');
 require_once(drupal_get_path('module', 'cms2cms') . '/view.php');
 require_once(drupal_get_path('module', 'cms2cms') . '/ui.php');
 
-
 function cms2cms_help($path)
 {
     switch ($path) {
@@ -58,27 +57,26 @@ function cms2cms_menu()
         'page callback' => 'cms2cms_save_options',
         'access arguments' => array('administer access control'),
     );
-    $items['admin/cms2cms/cms2cms-get-options'] = array(
-        'title' => 'saveOptions',
+    $items['admin/cms2cms/get-options'] = array(
+        'title' => 'getOptions',
         'page callback' => 'cms2cms_get_options',
         'access arguments' => array('administer access control'),
     );
-
 
     return $items;
 }
 
 function cms2cms_save_options()
 {
-   $data = new  CmsPluginData();
+    $data = new  CmsPluginData();
+
     return $data->saveOptions();
 }
 
 function cms2cms_get_options()
 {
     $data = new  CmsPluginData();
-    echo $data->getOptions();
-    die;
+    die(drupal_json_encode($data->getOptions()));
 }
 
 

@@ -1,6 +1,6 @@
 <?php
 /**
- * This script is necessary setup automated data exchange 
+ * This script is necessary setup automated data exchange
  * between Your/Merchant site and CMS2CMS.
  *
  * Please carefully follow steps below.
@@ -12,7 +12,7 @@
  *
  * Installation Instructions
  * ===========================================================================
- * 1. Extract files from archive and upload "cms2cms" folder into your site 
+ * 1. Extract files from archive and upload "cms2cms" folder into your site
  *    root catalog via FTP.
  *    Example how to upload: "http://www.yourstore.com/cms2cms"
  * 2. Make "cms2cms" folder writable (set the 777 permissions, "write for all")
@@ -26,7 +26,7 @@
  * 3. Send email (support@cms2cms.com) to CMS2CMS support requesting help.
  * 4. Add feedback on http://cms2cms.betaeasy.com/
  *
- * Most likely you uploaded this script into wrong folder 
+ * Most likely you uploaded this script into wrong folder
  * or misstyped the site address.
  *
  * DISCLAIMER
@@ -53,7 +53,6 @@
 error_reporting(E_ALL & ~E_NOTICE & ~E_STRICT & ~E_WARNING);
 @ini_set('display_errors', '1');
 
-
 if (get_magic_quotes_gpc()) {
     $process = array(&$_GET, &$_POST, &$_COOKIE, &$_REQUEST);
     while (list($key, $val) = each($process)) {
@@ -61,8 +60,9 @@ if (get_magic_quotes_gpc()) {
             unset($process[$key][$k]);
             if (is_array($v)) {
                 $process[$key][stripslashes($k)] = $v;
-                $process[] = &$process[$key][stripslashes($k)];
-            } else {
+                $process[] = & $process[$key][stripslashes($k)];
+            }
+            else {
                 $process[$key][stripslashes($k)] = stripslashes($v);
             }
         }
@@ -121,7 +121,7 @@ class Bridge_Loader
         $urlHost = str_replace('~', '\~', $urlHost);
         $urlPath = str_replace('~', '\~', $urlPath);
 
-        if (strpos($urlHost, 'www.') === 0){
+        if (strpos($urlHost, 'www.') === 0) {
             $urlHost = substr($urlHost, 4);
         }
 
@@ -144,11 +144,11 @@ class Bridge_Loader
     {
         $relativePath = $path;
         $currentPath = $this->getCurrentPath();
-        if (strpos($path, $currentPath) === 0){
+        if (strpos($path, $currentPath) === 0) {
             $relativePath = substr($path, strlen($currentPath));
         }
 
-        if (substr($relativePath, 0, 1) !== '/'){
+        if (substr($relativePath, 0, 1) !== '/') {
             $relativePath = '/' . $relativePath;
         }
 
@@ -160,7 +160,7 @@ class Bridge_Loader
         $dir = dirname($path);
         if (!file_exists($dir)
             && !mkdir($dir, 0777, true)
-        ){
+        ) {
             throw new Exception(sprintf('Can not create target dir %s', $dir));
         }
     }
@@ -190,7 +190,7 @@ class Bridge_Loader
      */
     function getCurrentPath()
     {
-        return $this->_base_dir;
+        return realpath($this->_base_dir . '/../../../../');
     }
 
     /**
@@ -316,7 +316,6 @@ class Bridge_Loader
             )
         );
 
-
         return $modules;
     }
 
@@ -423,11 +422,25 @@ class Bridge_Loader
 ?><?php
 class Bridge_Response_Null
 {
-    function openNode() {} 
-    function closeNode() {}
-    function closeResponseFile() {}
-    function sendResponse() {}
-    function sendData($data){}
+    function openNode()
+    {
+    }
+
+    function closeNode()
+    {
+    }
+
+    function closeResponseFile()
+    {
+    }
+
+    function sendResponse()
+    {
+    }
+
+    function sendData($data)
+    {
+    }
 }
 
 class Bridge_Response_Memory
@@ -452,7 +465,7 @@ class Bridge_Response_Memory
     function closeNode()
     {
         $nodeName = array_pop($this->openNodes);
-        if ($nodeName == false){
+        if ($nodeName == false) {
             Bridge_Exceprion::ex('Trying to close response node but no des are opened');
         }
         $this->response .= '</' . $nodeName . '>';
@@ -492,63 +505,66 @@ class Bridge_Response_Memory
 
 class Bridge_Response
 {
-	/**
-	 * Create a singleton instance of Bridge_Response
-	 *
-	 * @return Bridge_Response_Solid
-	 */
-	function &getInstance($classname = '')
-	{
-	    static $obj;
-	    if ($obj === null || ($classname != '' && get_class($obj) != $classname)) 
-	    {
-	        if ($classname == '') {
-	            $classname = 'Bridge_Response_Memory';
+    /**
+     * Create a singleton instance of Bridge_Response
+     *
+     * @return Bridge_Response_Solid
+     */
+    function &getInstance($classname = '')
+    {
+        static $obj;
+        if ($obj === null || ($classname != '' && get_class($obj) != $classname)) {
+            if ($classname == '') {
+                $classname = 'Bridge_Response_Memory';
             }
 
-	        $obj = new $classname();
-	    }
-	    return $obj;
-	}
+            $obj = new $classname();
+        }
 
-	function openNode($nodeName = '')
-	{
-       $obj = & Bridge_Response::getInstance();
-       $obj->openNode($nodeName);
-	}
-	
-	function closeNode()
-	{
-	   $obj = & Bridge_Response::getInstance();
-       $obj->closeNode();
-	}
+        return $obj;
+    }
+
+    function openNode($nodeName = '')
+    {
+        $obj = & Bridge_Response::getInstance();
+        $obj->openNode($nodeName);
+    }
+
+    function closeNode()
+    {
+        $obj = & Bridge_Response::getInstance();
+        $obj->closeNode();
+    }
 
     function sendData($data)
     {
         $obj = & Bridge_Response::getInstance();
         $obj->sendData($data);
     }
-	
-	function getFileHandler()
-	{
-	    $obj = & Bridge_Response::getInstance();
-	    return $obj->hFile;
-	}
-		
-	function disable()
-	{
-	    Bridge_Response::getInstance('Bridge_Response_Null');
-	}
-	
-	function sendResponse() 
-	{
-	    $obj = & Bridge_Response::getInstance();
+
+    function getFileHandler()
+    {
+        $obj = & Bridge_Response::getInstance();
+
+        return $obj->hFile;
+    }
+
+    function disable()
+    {
+        Bridge_Response::getInstance('Bridge_Response_Null');
+    }
+
+    function sendResponse()
+    {
+        $obj = & Bridge_Response::getInstance();
         $obj->sendResponse();
-	}
+    }
 }
+
 ?><?php
 
-class Bridge_Includer {
+class Bridge_Includer
+{
 
     public static function backupEnvironment()
     {
@@ -566,14 +582,15 @@ class Bridge_Includer {
                 'bufferCount' => ob_get_level()
             )
         );
+
         return $environment;
     }
 
     public static function safeInclude($fileName, $constants = array(), $variables = array(), $functions = array())
     {
 
-        if (function_exists('php_check_syntax')){
-            if (!php_check_syntax($fileName)){
+        if (function_exists('php_check_syntax')) {
+            if (!php_check_syntax($fileName)) {
                 return false;
             }
         }
@@ -587,8 +604,8 @@ class Bridge_Includer {
             $result = !empty($f);
         }
         */
-        
-        if (! file_exists($fileName)){
+
+        if (!file_exists($fileName)) {
             return false;
         }
 
@@ -617,8 +634,8 @@ class Bridge_Includer {
         );
 
         $constantsValues = array();
-        foreach($constants as $constantName){
-            if (defined($constantName)){
+        foreach ($constants as $constantName) {
+            if (defined($constantName)) {
                 $constantsValues[$constantName] = constant($constantName);
             }
             else {
@@ -628,20 +645,21 @@ class Bridge_Includer {
         $environment['constants'] = $constantsValues;
 
         $variablesValues = array();
-        foreach($variables as $variableName){
+        foreach ($variables as $variableName) {
             $variablesValues[$variableName] = $$variableName;
         }
         $environment['variables'] = $variablesValues;
 
         $functionsCallbacks = array();
-        foreach($functions as $functionName){
-            if (function_exists($functionName)){
+        foreach ($functions as $functionName) {
+            if (function_exists($functionName)) {
                 $functionsCallbacks[$functionName] = $functionName;
             }
         }
         $environment['functions'] = $functionsCallbacks;
         $environment['general'] = array();
         $environment['general']['bufferCount'] = ob_get_level();
+
         return $environment;
     }
 
@@ -658,22 +676,23 @@ class Bridge_Includer {
         $_FILES = $environment['files'];
 
         $buffCount = (int)$environment['general']['bufferCount'];
-        for($i = ob_get_level(); $i > $buffCount; $i--){
+        for ($i = ob_get_level(); $i > $buffCount; $i--) {
             ob_get_clean();
         }
     }
 
     public static function initCookies($data, $serialized = false)
     {
-        if ($serialized){
+        if ($serialized) {
             $data = unserialize($data);
         }
 
-        if (!is_array($data)){
+        if (!is_array($data)) {
             return false;
         }
 
         $_COOKIE = $data;
+
         return true;
     }
 
@@ -681,7 +700,7 @@ class Bridge_Includer {
     {
         session_start();
 
-        if ($serialized){
+        if ($serialized) {
             session_decode($data);
         }
         else {
@@ -698,13 +717,13 @@ class Bridge_Includer {
         $lines = array_filter($lines);
         $existingKeys = array();
         $configData = array();
-        foreach($lines as $line){
+        foreach ($lines as $line) {
             preg_match('/define\s{0,}\(s{0,}(?P<key>.*)\s{0,},\s{0,}(?P<value>.*)\s{0,}\);/im', $line, $matches);
-            if ($matches){
+            if ($matches) {
                 $key = self::unquoteString(trim($matches['key'], ' '));
                 $value = trim($matches['value'], ' ');
-                foreach($existingKeys as $existingKey){
-                    if (strpos($value, $existingKey) !== false){
+                foreach ($existingKeys as $existingKey) {
+                    if (strpos($value, $existingKey) !== false) {
                         $value = str_replace($existingKey, $configData[$existingKey], $value);
                     }
                 }
@@ -713,10 +732,10 @@ class Bridge_Includer {
             }
         }
 
-        foreach($configData as $confKey => $confValue){
+        foreach ($configData as $confKey => $confValue) {
             //$confValue = preg_replace('/(\'|")\s{0,}\.\s{0,}(\1)/', '', $confValue);
             $confValue = self::unquoteString($confValue);
-            if ($confValue){
+            if ($confValue) {
                 $configData[$confKey] = $confValue;
             }
         }
@@ -727,7 +746,7 @@ class Bridge_Includer {
     protected static function unquoteString($str)
     {
         $unquotedStr = $str;
-        if (is_string($str) && preg_match("/^('|\")(?P<quoted>.*)(\\1)$/", $str, $matches)){
+        if (is_string($str) && preg_match("/^('|\")(?P<quoted>.*)(\\1)$/", $str, $matches)) {
             $unquotedStr = $matches['quoted'];
         }
 
@@ -742,47 +761,51 @@ class Bridge_Includer {
         preg_match_all('~(require_once|require|include|include_once)[^\w_].*~mi', $content, $matches);
 
         $matches = $matches[0];
-        foreach($matches as $match){
+        foreach ($matches as $match) {
             $match = trim($match);
             $commentPos = strpos($match, '/*');
-            if ($commentPos){
+            if ($commentPos) {
                 $match = substr($match, 0, $commentPos);
             }
             $content = str_replace($match, '//' . $match . "\n", $content);
         }
-        
+
         return $content;
     }
 
 }
+
 ?><?php
-class Bridge_Exception {
-	
-	var $_warnings;
-	var $throwExceptions;
-    
-	function & getInstance() {
-		static $instance = null;
-		if ($instance === null) {
-			$instance = new Bridge_Exception();
-		}
-		return $instance;
-	}
-	
-	/*
-	function canThrowExceptions($throwExceptions = false)
-	{
-		if (is_bool($throwExceptions)) {
-			Bridge_Exception::$throwExceptions = $throwExceptions;
-		}
-		return $this;
-	}
-	*/
-	
-	function ex($message, $code)
-	{
-		$obj = & Bridge_Exception::getInstance();
-		$xmlError = '
+class Bridge_Exception
+{
+
+    var $_warnings;
+    var $throwExceptions;
+
+    function & getInstance()
+    {
+        static $instance = null;
+        if ($instance === null) {
+            $instance = new Bridge_Exception();
+        }
+
+        return $instance;
+    }
+
+    /*
+    function canThrowExceptions($throwExceptions = false)
+    {
+        if (is_bool($throwExceptions)) {
+            Bridge_Exception::$throwExceptions = $throwExceptions;
+        }
+        return $this;
+    }
+    */
+
+    function ex($message, $code)
+    {
+        $obj = & Bridge_Exception::getInstance();
+        $xmlError = '
 			<response>
 				<error>
     				<type>Exception</type>
@@ -809,60 +832,63 @@ class Bridge_Exception {
         header('X-msa-iserror: 1');
         die($xmlError);
 
-	}
-	
-	function warn($message)
-	{
-		$this->_warnings[] = $message;
-	}
-	
-	function _runtimeInfo() {
-		$info = 'PHP Version: ' . phpversion() . PHP_EOL 
-		      //. 'MySQL Server Version: ' . mysql_get_server_info() . PHP_EOL 
-		      . 'Webserver Version: ' . $_SERVER['SERVER_SOFTWARE'] . PHP_EOL;
-		
-		return $info;
-		// 1. debug backtrace
-		// 2. php version
-		// 3. mysql version
-		// 4. webserver version
-		// 5. shopping cart type
-		// 6. last mysql error
-		// 7. last mysql query
-	}
-	
-	function _backtrace()
-	{
-	    $trace = debug_backtrace();
-	    $m1_trace = array();
-	    $trace = array_reverse($trace, true);
-	    foreach ($trace as $i => $call) {
-	    	if ($i == 0 || $i == 1)
-	    	    continue;
-	    	    
-	    	$newIndex = $i - 2;
-	        
-	    	if ( $newIndex == 0)
-	    	{
-	    	    $b = '<b>'; $be = '</b>';
-	    	}
-	    	else 
-	    	{
-	    	    $b = ''; $be = '';
-	    	}
-	    	
-	    	$call['file'] = str_replace(realpath($_SERVER['DOCUMENT_ROOT']), '', realpath($call['file']));
-	    	$call['file'] = str_replace('/' . basename($call['file']), '<b>' . '/' . basename($call['file']) . '</b>', $call['file']);
-	    	    
-	    	$m1_trace .= "\n" .
-	    	    $newIndex . ': ' . $call['file'] . ':<b>' . $call['line'] . '</b> => ' 
-	    	    . $call['class'] . $call['type'] . '<b>' . $call['function'] . '</b>'
-	    	    . (!empty($call['args']) ?'("' . implode('","', $call['args']) . '")' : '()');
-	    }
-	    
-	    return $m1_trace;
-	}
+    }
+
+    function warn($message)
+    {
+        $this->_warnings[] = $message;
+    }
+
+    function _runtimeInfo()
+    {
+        $info = 'PHP Version: ' . phpversion() . PHP_EOL
+            //. 'MySQL Server Version: ' . mysql_get_server_info() . PHP_EOL
+            . 'Webserver Version: ' . $_SERVER['SERVER_SOFTWARE'] . PHP_EOL;
+
+        return $info;
+        // 1. debug backtrace
+        // 2. php version
+        // 3. mysql version
+        // 4. webserver version
+        // 5. shopping cart type
+        // 6. last mysql error
+        // 7. last mysql query
+    }
+
+    function _backtrace()
+    {
+        $trace = debug_backtrace();
+        $m1_trace = array();
+        $trace = array_reverse($trace, true);
+        foreach ($trace as $i => $call) {
+            if ($i == 0 || $i == 1) {
+                continue;
+            }
+
+            $newIndex = $i - 2;
+
+            if ($newIndex == 0) {
+                $b = '<b>';
+                $be = '</b>';
+            }
+            else {
+                $b = '';
+                $be = '';
+            }
+
+            $call['file'] = str_replace(realpath($_SERVER['DOCUMENT_ROOT']), '', realpath($call['file']));
+            $call['file'] = str_replace('/' . basename($call['file']), '<b>' . '/' . basename($call['file']) . '</b>', $call['file']);
+
+            $m1_trace .= "\n" .
+                $newIndex . ': ' . $call['file'] . ':<b>' . $call['line'] . '</b> => '
+                . $call['class'] . $call['type'] . '<b>' . $call['function'] . '</b>'
+                . (!empty($call['args']) ? '("' . implode('","', $call['args']) . '")' : '()');
+        }
+
+        return $m1_trace;
+    }
 }
+
 ?><?php
 class Bridge_Dispatcher
 {
@@ -872,6 +898,8 @@ class Bridge_Dispatcher
             echo 'Bridge successfully installed';
             die;
         }
+
+
 
         if ($this->_read_access_key() != $_REQUEST['accesskey']) {
             Bridge_Exception::ex('Hash is invalid', 'invalid_hash');
@@ -887,7 +915,7 @@ class Bridge_Dispatcher
         $module = $_REQUEST['module'];
         $params = $_REQUEST['params'];
 
-        if (isset($params['encoding']) && ($params['encoding'] === 'base64-serialize')){
+        if (isset($params['encoding']) && ($params['encoding'] === 'base64-serialize')) {
             $encodedParams = $params['value'];
             $params = unserialize(base64_decode($encodedParams));
         }
@@ -903,7 +931,7 @@ class Bridge_Dispatcher
         $dir = $loader->dir_base();
         $keyFile = $dir . DIRECTORY_SEPARATOR . 'key.php';
 
-        if (!file_exists($keyFile)){
+        if (!file_exists($keyFile)) {
             $currentCms = $loader->getCmsInstance();
             $key = $currentCms->getAccessKey();
             define('CMS2CMS_ACCESS_KEY', $key);
@@ -1245,6 +1273,7 @@ class Bridge_Db
     }
 
 }
+
 ?><?php
 class Bridge_Base
 {
@@ -1257,10 +1286,12 @@ class Bridge_Base
     {
         $matches = array();
         preg_match($pattern, $subject, $matches);
+
         return $matches[$matchNum];
     }
 
 }
+
 ?><?php
 class Bridge_Module_Info
 {
@@ -1304,7 +1335,7 @@ class Bridge_Module_Info
 
         $infoNew = array(
             'bridge_version' => $bridgeVersion,
-            'cart_type' =>  $config['CMSType'],
+            'cart_type' => $config['CMSType'],
             'cart_version' => $config['version'],
             'params' => $params,
             'modules' => $modules
@@ -1445,6 +1476,7 @@ class Bridge_Module_Dbsql2
         }
     }
 }
+
 ?><?php
 class Bridge_Module_Transfer
 {
@@ -1463,7 +1495,7 @@ class Bridge_Module_Transfer
         $cleanTarget = $this->getCleanHost($targetUrl);
 
         $mode = 'remote';
-        if ($cleanSource === $cleanTarget){
+        if ($cleanSource === $cleanTarget) {
             return 'local';
         }
 
@@ -1471,15 +1503,16 @@ class Bridge_Module_Transfer
     }
 
     // http://ua2.php.net/manual/en/function.parse-url.php
-    function combineUrl($parsedUrl) {
-        $scheme   = isset($parsedUrl['scheme']) ? $parsedUrl['scheme'] . '://' : '';
-        $host     = isset($parsedUrl['host']) ? $parsedUrl['host'] : '';
-        $port     = isset($parsedUrl['port']) ? ':' . $parsedUrl['port'] : '';
-        $user     = isset($parsedUrl['user']) ? $parsedUrl['user'] : '';
-        $pass     = isset($parsedUrl['pass']) ? ':' . $parsedUrl['pass']  : '';
-        $pass     = ($user || $pass) ? $pass . "@" : '';
-        $path     = isset($parsedUrl['path']) ? $parsedUrl['path'] : '';
-        $query    = isset($parsedUrl['query']) ? '?' . $parsedUrl['query'] : '';
+    function combineUrl($parsedUrl)
+    {
+        $scheme = isset($parsedUrl['scheme']) ? $parsedUrl['scheme'] . '://' : '';
+        $host = isset($parsedUrl['host']) ? $parsedUrl['host'] : '';
+        $port = isset($parsedUrl['port']) ? ':' . $parsedUrl['port'] : '';
+        $user = isset($parsedUrl['user']) ? $parsedUrl['user'] : '';
+        $pass = isset($parsedUrl['pass']) ? ':' . $parsedUrl['pass'] : '';
+        $pass = ($user || $pass) ? $pass . "@" : '';
+        $path = isset($parsedUrl['path']) ? $parsedUrl['path'] : '';
+        $query = isset($parsedUrl['query']) ? '?' . $parsedUrl['query'] : '';
         $fragment = isset($parsedUrl['fragment']) ? '#' . $parsedUrl['fragment'] : '';
 
         return $scheme . $user . $pass . $host . $port . $path . $query . $fragment;
@@ -1487,15 +1520,15 @@ class Bridge_Module_Transfer
 
     protected function encodeUrl($url)
     {
-        if (rawurldecode($url) !== $url){
+        if (rawurldecode($url) !== $url) {
             return $url;
         }
 
         $urlParts = parse_url($url);
-        if (isset($urlParts['path'])){
+        if (isset($urlParts['path'])) {
             $encodedPathParts = array();
             $pathParts = explode('/', $urlParts['path']);
-            foreach($pathParts as $pathPart){
+            foreach ($pathParts as $pathPart) {
                 $encodedPathParts[] = rawurlencode($pathPart);
             }
 
@@ -1525,7 +1558,7 @@ class Bridge_Module_Transfer
 
     protected function curlRedirectSafeMode($ch, $redirects)
     {
-        if ($redirects < 0){
+        if ($redirects < 0) {
             throw new Exception('Too many redirects');
         }
 
@@ -1538,7 +1571,7 @@ class Bridge_Module_Transfer
 
         $code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
         $code = intval($code);
-        if ($code === 200){
+        if ($code === 200) {
             return $data;
         }
 
@@ -1584,7 +1617,7 @@ class Bridge_Module_Transfer
         $body = $this->curlExec($ch, 5);
 
         $fp = fopen($targetPath, 'w');
-        if (!$fp){
+        if (!$fp) {
             throw new Exception(sprintf('Can not write into %s', $targetPath));
         }
 
@@ -1596,19 +1629,19 @@ class Bridge_Module_Transfer
 
     protected function transferLocalFile($sourcePath, $targetPath)
     {
-        if (!file_exists($sourcePath)){
+        if (!file_exists($sourcePath)) {
             throw new Exception(sprintf('%s does not exists', $sourcePath));
         }
 
-        if (!is_readable($sourcePath)){
+        if (!is_readable($sourcePath)) {
             throw new Exception(sprintf('%s is not readable', $sourcePath));
         }
 
-        if ($sourcePath === $targetPath){
+        if ($sourcePath === $targetPath) {
             return $targetPath;
         }
 
-        if (!copy($sourcePath, $targetPath)){
+        if (!copy($sourcePath, $targetPath)) {
             throw new Exception(sprintf('Copy %s to %s failed', $sourcePath, $targetPath));
         }
 
@@ -1622,7 +1655,7 @@ class Bridge_Module_Transfer
 
         $transferResult = null;
         $targetCopies = array();
-        if (is_array($targetUrl)){
+        if (is_array($targetUrl)) {
             $targetCopies = array_splice($targetUrl, 1);
             $targetUrl = array_pop($targetUrl);
         }
@@ -1636,35 +1669,34 @@ class Bridge_Module_Transfer
         $targetPath = $loader->getLocalAbsPath($targetHost, $targetUrl);
         $loader->createPathIfNotExists($targetPath);
 
-        if (is_dir($targetPath)){
+        if (is_dir($targetPath)) {
             throw new Exception(sprintf('%s is a directory', $targetPath));
         }
 
         $targetDir = dirname($targetPath);
-        if (!is_writable($targetDir)){
+        if (!is_writable($targetDir)) {
             throw new Exception(sprintf('Directory %s is not writable', $targetDir));
         }
 
-
-        if ($method === 'local'){
+        if ($method === 'local') {
             try {
                 $success[] = $this->transferLocalFile($sourcePath, $targetPath);
             }
-            catch(Exception $e){
+            catch (Exception $e) {
                 $method = 'remote';
             }
         }
 
-        if ($method === 'remote'){
+        if ($method === 'remote') {
             $success[] = $this->transferRemoteFile($sourceUrl, $targetPath);
         }
 
-        foreach($targetCopies as $targetUrl){
+        foreach ($targetCopies as $targetUrl) {
             $targetCopy = $loader->getLocalAbsPath($targetHost, $targetUrl);
             try {
                 $success[] = $this->transferLocalFile($targetPath, $targetCopy);
             }
-            catch(Exception $e){
+            catch (Exception $e) {
                 $error[] = $e->getMessage();
             }
         }
@@ -1681,11 +1713,11 @@ class Bridge_Module_Transfer
     {
         $transferResults = array();
 
-        foreach($transferList as $source => $target){
+        foreach ($transferList as $source => $target) {
             try {
                 $transferResults[$source] = $this->transferFile($sourceHost, $targetHost, $source, $target);
             }
-            catch(Exception $e){
+            catch (Exception $e) {
                 $transferResults[$source] = array('error' => array($e->getMessage()));
             }
         }
@@ -1695,15 +1727,15 @@ class Bridge_Module_Transfer
 
     public function transferFiles(array $params)
     {
-        if (!isset($params['sourceHost'])){
+        if (!isset($params['sourceHost'])) {
             throw new Exception('Source is required');
         }
 
-        if (!isset($params['targetHost'])){
+        if (!isset($params['targetHost'])) {
             throw new Exception('Target is required');
         }
 
-        if (!isset($params['list'])){
+        if (!isset($params['list'])) {
             throw new Exception('Transfer list is required');
         }
 
@@ -1711,11 +1743,11 @@ class Bridge_Module_Transfer
         $targetHost = $params['targetHost'];
         $transferList = $params['list'];
 
-        if (!is_array($transferList)){
+        if (!is_array($transferList)) {
             throw new Exception('Bad transfer list format');
         }
 
-        if (count($transferList) === 0){
+        if (count($transferList) === 0) {
             throw new Exception('Transfer list is empty');
         }
 
@@ -1727,8 +1759,9 @@ class Bridge_Module_Transfer
         try {
             $results = $this->transferFiles($params);
         }
-        catch(Exception $e){
+        catch (Exception $e) {
             Bridge_Exception::ex($e->getMessage(), null);
+
             return;
         }
 
@@ -1740,6 +1773,7 @@ class Bridge_Module_Transfer
     }
 
 }
+
 ?><?php
 class Bridge_Module_Resize
 {
@@ -1761,7 +1795,7 @@ class Bridge_Module_Resize
         $paddingLeft = 0;
         $paddingTop = 0;
 
-        if ($resizeWidth > $imageWidth){
+        if ($resizeWidth > $imageWidth) {
             $diffWidth = $resizeWidth - $imageWidth;
             $marginLeft = intval(floor($diffWidth / 2));
 
@@ -1781,7 +1815,7 @@ class Bridge_Module_Resize
             $outerWidth = $resizeWidth;
         }
 
-        if ($resizeHeight > $imageHeight){
+        if ($resizeHeight > $imageHeight) {
             $diffHeight = $resizeHeight - $imageHeight;
             $marginTop = intval(floor($diffHeight / 2));
 
@@ -1820,16 +1854,16 @@ class Bridge_Module_Resize
 
     public function resize($sourcePath, $targetPath, $resizeWidth, $resizeHeight)
     {
-        if (!file_exists($sourcePath)){
+        if (!file_exists($sourcePath)) {
             throw new Exception(sprintf('File %s does not exists', $sourcePath));
         }
 
         $type = strtolower(substr(strrchr($sourcePath, '.'), 1));
-        if($type == 'jpeg') {
+        if ($type == 'jpeg') {
             $type = 'jpg';
         }
 
-        switch($type){
+        switch ($type) {
             case 'bmp':
                 $image = imagecreatefromwbmp($sourcePath);
                 break;
@@ -1846,23 +1880,23 @@ class Bridge_Module_Resize
                 throw new Exception("Unsupported picture type");
         }
 
-        if ($image === false){
+        if ($image === false) {
             throw new Exception(sprintf('Can not read image %s', $sourcePath));
         }
 
         $imageWidth = imagesx($image);
         $imageHeight = imagesy($image);
 
-        if ($resizeWidth === -1 && $resizeHeight === -1){
+        if ($resizeWidth === -1 && $resizeHeight === -1) {
             throw new Exception(sprintf('Can not resize %s %s', $resizeWidth, $resizeHeight));
         }
 
-        if ($resizeWidth === -1 && $resizeHeight > 0){
+        if ($resizeWidth === -1 && $resizeHeight > 0) {
             $resizeWidth = ($imageWidth * $resizeHeight) / $imageHeight;
             $resizeWidth = intval(floor($resizeWidth));
         }
 
-        if ($resizeHeight === -1 && $resizeWidth > 0){
+        if ($resizeHeight === -1 && $resizeWidth > 0) {
             $resizeHeight = ($imageHeight * $resizeWidth) / $imageWidth;
             $resizeHeight = intval(floor($resizeHeight));
         }
@@ -1889,11 +1923,11 @@ class Bridge_Module_Resize
             $cropSize['innerHeight']
         );
 
-        if (!$copySuccess){
+        if (!$copySuccess) {
             throw new Exception('Resize failed');
         }
 
-        switch($type){
+        switch ($type) {
             case 'bmp':
                 $saveSuccess = imagewbmp($resultImage, $targetPath);
                 break;
@@ -1913,7 +1947,7 @@ class Bridge_Module_Resize
         imagedestroy($image);
         imagedestroy($resultImage);
 
-        if (!$saveSuccess){
+        if (!$saveSuccess) {
             throw new Exception('Save failed');
         }
 
@@ -1928,19 +1962,19 @@ class Bridge_Module_Resize
 
     protected function resizeImage($resizeHost, $resizeParams)
     {
-        if (!isset($resizeParams['sourcePath'])){
+        if (!isset($resizeParams['sourcePath'])) {
             throw new Exception('SourcePath is required');
         }
 
-        if (!isset($resizeParams['targetPath'])){
+        if (!isset($resizeParams['targetPath'])) {
             throw new Exception('TargetPath is required');
         }
 
-        if (!isset($resizeParams['width'])){
+        if (!isset($resizeParams['width'])) {
             throw new Exception('Width is required');
         }
 
-        if (!isset($resizeParams['height'])){
+        if (!isset($resizeParams['height'])) {
             throw new Exception('Height is required');
         }
 
@@ -1964,29 +1998,29 @@ class Bridge_Module_Resize
 
     protected function resizeImages($params)
     {
-        if (!isset($params['resizeHost'])){
+        if (!isset($params['resizeHost'])) {
             throw new Exception('Resize host is required');
         }
 
-        if (!isset($params['list'])){
+        if (!isset($params['list'])) {
             throw new Exception('Resize list is required');
         }
 
         $resizeHost = $params['resizeHost'];
 
         $resizeList = $params['list'];
-        if (!is_array($resizeList)){
+        if (!is_array($resizeList)) {
             throw new Exception('Resize list must be array');
         }
 
         $success = array();
         $error = array();
 
-        foreach($resizeList as $index => $resizeParams){
+        foreach ($resizeList as $index => $resizeParams) {
             try {
                 $success[$index] = $this->resizeImage($resizeHost, $resizeParams);
             }
-            catch(Exception $e){
+            catch (Exception $e) {
                 $error[$index] = $e->getMessage();
             }
         }
@@ -2004,8 +2038,9 @@ class Bridge_Module_Resize
         try {
             $results = $this->resizeImages($params);
         }
-        catch(Exception $e){
+        catch (Exception $e) {
             Bridge_Exception::ex($e->getMessage(), 'image_resize');
+
             return;
         }
 
@@ -2017,6 +2052,7 @@ class Bridge_Module_Resize
     }
 
 }
+
 ?><?php
 class Bridge_Module_ImageSize
 {
@@ -2026,16 +2062,16 @@ class Bridge_Module_ImageSize
         $loader = Bridge_Loader::getInstance();
         $sourcePath = $loader->getLocalAbsPath($host, $sourceUrl);
 
-        if (!file_exists($sourcePath)){
+        if (!file_exists($sourcePath)) {
             throw new Exception(sprintf('File %s does not exists', $sourcePath));
         }
 
         $type = strtolower(substr(strrchr($sourcePath, '.'), 1));
-        if($type == 'jpeg') {
+        if ($type == 'jpeg') {
             $type = 'jpg';
         }
 
-        switch($type){
+        switch ($type) {
             case 'bmp':
                 $image = imagecreatefromwbmp($sourcePath);
                 break;
@@ -2052,7 +2088,7 @@ class Bridge_Module_ImageSize
                 throw new Exception("Unsupported picture type");
         }
 
-        if ($image === false){
+        if ($image === false) {
             throw new Exception(sprintf('Can not read image %s', $sourcePath));
         }
 
@@ -2069,29 +2105,29 @@ class Bridge_Module_ImageSize
 
     protected function getSizes($params)
     {
-        if (!isset($params['sizeHost'])){
+        if (!isset($params['sizeHost'])) {
             throw new Exception('Size host is required');
         }
 
-        if (!isset($params['list'])){
+        if (!isset($params['list'])) {
             throw new Exception('Resize list is required');
         }
 
         $host = $params['sizeHost'];
 
         $list = $params['list'];
-        if (!is_array($list)){
+        if (!is_array($list)) {
             throw new Exception('Resize list must be array');
         }
 
         $success = array();
         $error = array();
 
-        foreach($list as $index => $sourceUrl){
+        foreach ($list as $index => $sourceUrl) {
             try {
                 $success[$index] = $this->getSize($host, $sourceUrl);
             }
-            catch(Exception $e){
+            catch (Exception $e) {
                 $error[$index] = $e->getMessage();
             }
         }
@@ -2109,8 +2145,9 @@ class Bridge_Module_ImageSize
         try {
             $results = $this->getSizes($params);
         }
-        catch(Exception $e){
+        catch (Exception $e) {
             Bridge_Exception::ex($e->getMessage(), 'image_size');
+
             return;
         }
 
@@ -2122,6 +2159,7 @@ class Bridge_Module_ImageSize
     }
 
 }
+
 ?><?php
 class Bridge_Module_Fs
 {
@@ -2140,12 +2178,12 @@ class Bridge_Module_Fs
 
     public function runFileExists(array $params)
     {
-        if (!isset($params['list'])){
+        if (!isset($params['list'])) {
             throw new Exception('List params is missing');
         }
 
         $list = $params['list'];
-        if (!is_array($list)){
+        if (!is_array($list)) {
             throw new Exception('Bad list type');
         }
 
@@ -2153,9 +2191,9 @@ class Bridge_Module_Fs
         $rootDir = $loader->getCurrentPath();
 
         $existingFiles = array();
-        foreach($list as $relativePath){
+        foreach ($list as $relativePath) {
             $absPath = $rootDir . $relativePath;
-            if (file_exists($absPath)){
+            if (file_exists($absPath)) {
                 $existingFiles[] = $relativePath;
             }
         }
@@ -2165,7 +2203,7 @@ class Bridge_Module_Fs
 
     public function doOperation($operation, $params)
     {
-        switch($operation){
+        switch ($operation) {
             case 'file-exists':
                 $this->runFileExists($params);
                 break;
@@ -2176,7 +2214,7 @@ class Bridge_Module_Fs
 
     public function run($params)
     {
-        if (!isset($params['operation'])){
+        if (!isset($params['operation'])) {
             Bridge_Exception::ex('Type param is missing', 'dump_error');
         }
 
@@ -2186,13 +2224,14 @@ class Bridge_Module_Fs
         try {
             $this->doOperation($operation, $params);
         }
-        catch(Exception $e){
+        catch (Exception $e) {
             Bridge_Exception::ex($e->getMessage(), 'fs_error');
         }
         $this->response->closeNode();
     }
 
 }
+
 ?><?php
 class Bridge_Module_Dump
 {
@@ -2224,7 +2263,7 @@ class Bridge_Module_Dump
 
     protected function runShowCreate(array $params)
     {
-        if (!isset($params['table'])){
+        if (!isset($params['table'])) {
             throw new Exception('Table param is missing');
         }
 
@@ -2236,7 +2275,7 @@ class Bridge_Module_Dump
         );
 
         $rows = $this->db->fetchAll($sql);
-        if (count($rows) === 0){
+        if (count($rows) === 0) {
             throw new Exception();
         }
 
@@ -2248,11 +2287,11 @@ class Bridge_Module_Dump
 
     protected function runExecCreate($params)
     {
-        if (!isset($params['createStatement'])){
+        if (!isset($params['createStatement'])) {
             throw new Exception('Statement param is missing');
         }
 
-        if (!isset($params['dropStatement'])){
+        if (!isset($params['dropStatement'])) {
             throw new Exception('Table param is missing');
         }
 
@@ -2264,7 +2303,7 @@ class Bridge_Module_Dump
             $this->db->execute($dropSql);
             $this->db->execute($createSql);
         }
-        catch(Exception $e){
+        catch (Exception $e) {
             Bridge_Exception::ex($e->getMessage(), 'db_error');
         }
     }
@@ -2276,7 +2315,7 @@ class Bridge_Module_Dump
             $table
         );
 
-        if ($filter !== ''){
+        if ($filter !== '') {
             $sql .= ' ' . $filter;
         }
 
@@ -2288,15 +2327,15 @@ class Bridge_Module_Dump
 
     protected function runSelect(array $params)
     {
-        if (!isset($params['table'])){
+        if (!isset($params['table'])) {
             throw new Exception('Table param is missing');
         }
 
-        if (!isset($params['limit'])){
+        if (!isset($params['limit'])) {
             throw new Exception('Limit param is missing');
         }
 
-        if (!isset($params['offset'])){
+        if (!isset($params['offset'])) {
             throw new Exception('Offset param is missing');
         }
 
@@ -2305,7 +2344,7 @@ class Bridge_Module_Dump
         $offset = $params['offset'];
 
         $filter = '';
-        if (isset($params['filter'])){
+        if (isset($params['filter'])) {
             $filter = $params['filter'];
         }
 
@@ -2327,9 +2366,9 @@ class Bridge_Module_Dump
     {
         $fieldNamesEscaped = array();
         $fieldValuesEscaped = array();
-        foreach($data as $fieldName => $fieldValue){
+        foreach ($data as $fieldName => $fieldValue) {
             $fieldNamesEscaped[] = '`' . $fieldName . '`';
-            if ($fieldValue !== null){
+            if ($fieldValue !== null) {
                 $fieldValuesEscaped[] = '"' . ($this->db->escape($fieldValue)) . '"';
             }
             else {
@@ -2352,11 +2391,11 @@ class Bridge_Module_Dump
 
     protected function runInsert(array $params)
     {
-        if (!isset($params['table'])){
+        if (!isset($params['table'])) {
             throw new Exception('Table param is missing');
         }
 
-        if (!isset($params['rows'])){
+        if (!isset($params['rows'])) {
             throw new Exception('Rows param is missing');
         }
 
@@ -2364,14 +2403,14 @@ class Bridge_Module_Dump
         $rows = $params['rows'];
 
         $errors = array();
-        foreach($rows as $index => $row){
+        foreach ($rows as $index => $row) {
             $data = unserialize(base64_decode($row));
             $sql = $this->getInsertQuery($table, $data);
 
             try {
                 $this->db->execute($sql);
             }
-            catch(Exception $e){
+            catch (Exception $e) {
                 $errors[$index] = $e->getMessage();
             }
         }
@@ -2388,7 +2427,7 @@ class Bridge_Module_Dump
 
     protected function runExecute(array $params)
     {
-        if (!isset($params['queryData'])){
+        if (!isset($params['queryData'])) {
             throw new Exception('QueryData param is missing');
         }
 
@@ -2400,7 +2439,7 @@ class Bridge_Module_Dump
 
     protected function runCount(array $params)
     {
-        if (!isset($params['table'])){
+        if (!isset($params['table'])) {
             throw new Exception('Table param is missing');
         }
 
@@ -2418,11 +2457,11 @@ class Bridge_Module_Dump
 
     protected function runDelete(array $params)
     {
-        if (!isset($params['table'])){
+        if (!isset($params['table'])) {
             throw new Exception('Table param is missing');
         }
 
-        if (!isset($params['count'])){
+        if (!isset($params['count'])) {
             throw new Exception('Table param is missing');
         }
 
@@ -2445,7 +2484,7 @@ class Bridge_Module_Dump
 
     protected function doOperation($operation, $params)
     {
-        switch($operation){
+        switch ($operation) {
             case 'list-tables':
                 $this->runListTables();
                 break;
@@ -2477,7 +2516,7 @@ class Bridge_Module_Dump
 
     function run($params)
     {
-        if (!isset($params['operation'])){
+        if (!isset($params['operation'])) {
             Bridge_Exception::ex('Type param is missing', 'dump_error');
         }
 
@@ -2487,18 +2526,19 @@ class Bridge_Module_Dump
         try {
             $this->doOperation($operation, $params);
         }
-        catch(Exception $e){
+        catch (Exception $e) {
             Bridge_Exception::ex($e->getMessage(), 'dump_error');
         }
         $this->response->closeNode();
     }
 
 }
+
 ?><?php
 class Bridge_Module_FileList
 {
     /**
-     * @param array  $directory
+     * @param array $directory
      */
     function run(array $directory)
     {
@@ -2510,7 +2550,7 @@ class Bridge_Module_FileList
         /**@var $response Bridge_Response_Memory */
         $response = Bridge_Response::getInstance('Bridge_Response_Memory');
         $response->openNode('fileList');
-        $response->sendNode('ImageEncoded',  $encodedFileList);
+        $response->sendNode('ImageEncoded', $encodedFileList);
         $response->closeNode();
     }
 }
@@ -2529,8 +2569,8 @@ abstract class Bridge_Module_Cms_Abstract
             $prefix = $config['db']['dbprefix'];
         }
 
-        if (is_array($prefix)){
-            if (isset($prefix[$tableName])){
+        if (is_array($prefix)) {
+            if (isset($prefix[$tableName])) {
                 $prefix = $prefix[$tableName];
             }
             else {
@@ -2607,340 +2647,9 @@ abstract class Bridge_Module_Cms_Abstract
     }
 
 }
-?><?php
-class Bridge_Module_Cms_WordPress_WordPress3 extends Bridge_Module_Cms_Abstract
-{
-
-    protected $config = null;
-
-    protected function getDbConfigPath()
-    {
-        $dbConfig = Bridge_Loader::getInstance()->getCurrentPath() . DIRECTORY_SEPARATOR . 'wp-config.php';
-
-        return $dbConfig;
-    }
-
-    protected function getVersionConfigPath()
-    {
-        $versionConfig = Bridge_Loader::getInstance()->getCurrentPath() . DIRECTORY_SEPARATOR . 'wp-includes' . DIRECTORY_SEPARATOR . 'version.php';
-
-        return $versionConfig;
-    }
-
-    public function detect()
-    {
-        $dbConfig = $this->getDbConfigPath();
-        $versionConfig = $this->getVersionConfigPath();
-
-        return file_exists($dbConfig) && file_exists($versionConfig);
-    }
-
-    protected function getConfigFromConfigFiles()
-    {
-
-        $dbConfig = $this->getDbConfigPath();
-        $versionConfig = $this->getVersionConfigPath();
-
-        $dbConfigContent = Bridge_Includer::stripIncludes($dbConfig);
-        $versionConfigContent = Bridge_Includer::stripIncludes($versionConfig);
-
-        ob_start();
-        eval ($dbConfigContent);
-        eval ($versionConfigContent);
-        ob_clean();
-
-        $config = array();
-        $config['version'] = isset($wp_version) ? $wp_version : 'unknown';
-        $config['CMSType'] = 'WordPress';
-        $config['db']['host'] = defined('DB_HOST') ? constant('DB_HOST') : 'localhost';
-        $config['db']['user'] = defined('DB_USER') ? constant('DB_USER') : 'root';
-        $config['db']['password'] = defined('DB_PASSWORD') ? constant('DB_PASSWORD') : '';
-        $config['db']['dbname'] = defined('DB_NAME') ? constant('DB_NAME') : 'wordpress';
-        $config['db']['dbprefix'] = isset($table_prefix) ? $table_prefix : '';
-        $config['db']['driver'] = 'mysqli'; // hardcoded database scheme
-
-        return $config;
-    }
-
-    protected function getOptionValue($optionName)
-    {
-        $db = Bridge_Db::getDbAdapter();
-        $sql = sprintf(
-            "
-                SELECT `option_value`
-                FROM `%s`
-                WHERE `option_name` = '%s'
-            ",
-            $this->prefixTable('options'),
-            $optionName
-        );
-
-        $option = $db->fetchOne($sql);
-
-        return $option;
-    }
-
-    public function getImageDir()
-    {
-        $optImgDirectory = $this->getOptionValue('upload_path');
-
-        $path = '/wp-content/uploads';
-        if (!empty($optImgDirectory)) {
-            $path = Bridge_Loader::getInstance()->getLocalRelativePath($optImgDirectory);
-        }
-
-        return $path;
-    }
-
-    public function getSiteUrl()
-    {
-        $siteUrl = $this->getOptionValue('siteurl');
-
-        return empty($siteUrl) ? '' : $siteUrl;
-    }
-
-    public function detectExtensions()
-    {
-        $plugins = array();
-        $pluginsStr = $this->getOptionValue('active_plugins');
-
-        $activePlugins = unserialize($pluginsStr);
-        if (!$activePlugins) {
-            return $plugins;
-        }
-
-        return $activePlugins;
-    }
-
-    public function getAccessKey()
-    {
-        $db = Bridge_Db::getDbAdapter();
-        $sql = sprintf(
-            "
-                SELECT `option_value`
-                FROM `%s`
-                WHERE `option_name` = 'cms2cms-key'
-            ",
-            $this->prefixTable('cms2cms_options')
-        );
-
-        $key = $db->fetchOne($sql);
-        if (!$key) {
-            return null;
-        }
-
-        return $key;
-    }
-
-}
 
 ?><?php
-abstract class Bridge_Module_Cms_Joomla_Base extends Bridge_Module_Cms_Abstract
-{
-
-    abstract protected function getDbConfigPath();
-
-    abstract protected function getVersionConfigPath();
-
-    public function detect()
-    {
-        $config = $this->getDbConfigPath();
-        $version = $this->getVersionConfigPath();
-
-        return file_exists($config) && file_exists($version);
-    }
-
-    public function getImageDir()
-    {
-        return '/images';
-    }
-
-    public function getSiteUrl()
-    {
-        return '';
-    }
-}
-
-?><?php
-class Bridge_Module_Cms_Joomla_Joomla15 extends Bridge_Module_Cms_Joomla_Base
-{
-
-    protected function getDbConfigPath()
-    {
-        $config = Bridge_Loader::getInstance()->getCurrentPath() . DIRECTORY_SEPARATOR . 'configuration.php';
-
-        return $config;
-    }
-
-    protected function getVersionConfigPath()
-    {
-        $version = Bridge_Loader::getInstance()->getCurrentPath() . DIRECTORY_SEPARATOR . 'libraries' . DIRECTORY_SEPARATOR . 'joomla' . DIRECTORY_SEPARATOR . 'version.php';
-
-        return $version;
-    }
-
-    protected function getConfigFromConfigFiles()
-    {
-
-        $config = $this->getDbConfigPath();
-        $version = $this->getVersionConfigPath();
-
-        define('JPATH_BASE', Bridge_Loader::getInstance()->getCurrentPath());
-        ob_start();
-        include ($config);
-        include ($version);
-        ob_clean();
-
-        if (!class_exists('JVersion')) {
-            return false;
-        }
-
-        $joomlaVersion = new JVersion();
-        $joomlaConfig = new JConfig();
-
-        $config = array();
-        $config['CMSType'] = 'Joomla';
-        $config['version'] = $joomlaVersion->RELEASE . '.' . $joomlaVersion->DEV_LEVEL;
-        $config['seo']['is_use'] = $joomlaConfig->sef;
-        $config['seo']['sef_rewrite'] = $joomlaConfig->sef_rewrite;
-        $config['seo']['sef_suffix'] = $joomlaConfig->sef_suffix;
-        $config['db']['host'] = $joomlaConfig->host;
-        $config['db']['user'] = $joomlaConfig->user;
-        $config['db']['password'] = $joomlaConfig->password;
-        $config['db']['dbname'] = $joomlaConfig->db;
-        $config['db']['dbprefix'] = $joomlaConfig->dbprefix;
-        $config['db']['driver'] = $joomlaConfig->dbtype;
-
-        return $config;
-    }
-
-    public function detectExtensions()
-    {
-        if (!class_exists('JVersion')) {
-            return array();
-        }
-
-        $joomlaVersion = new JVersion();
-        if (version_compare($joomlaVersion->RELEASE, '1.5')) {
-            $extensions = $this->detect16Extensions();
-        }
-        else {
-            $extensions = $this->detect15Extensions();
-        }
-
-        return $extensions;
-
-    }
-
-    public function detect15Extensions()
-    {
-        $db = Bridge_Db::getDbAdapter();
-
-        $sqlModules = sprintf(
-            '
-                SELECT `module`, `published`
-                FROM `%s`
-            ',
-            $this->prefixTable('modules')
-        );
-
-        $sqlPlugins = sprintf(
-            '
-                    SELECT `name`, `published`
-                    FROM `%s`
-                ',
-            $this->prefixTable('plugins')
-        );
-
-        $modules = $db->fetchAll($sqlModules, 'module');
-        $plugins = $db->fetchAll($sqlPlugins, 'name');
-
-        return array_merge($modules, $plugins);
-
-    }
-
-    public function detect16Extensions()
-    {
-        $db = Bridge_Db::getDbAdapter();
-        $sql = sprintf(
-            '
-                SELECT `name`, `enabled`
-                FROM `%s`
-            ',
-            $this->prefixTable('extensions')
-        );
-
-        return $db->fetchAll($sql, 'name');
-
-    }
-
-
-}
-?><?php
-class Bridge_Module_Cms_Joomla_Joomla17 extends Bridge_Module_Cms_Joomla_Joomla15
-{
-
-    protected function getVersionConfigPath()
-    {
-        $version = Bridge_Loader::getInstance()->getCurrentPath() . DIRECTORY_SEPARATOR . 'includes' . DIRECTORY_SEPARATOR . 'version.php';
-
-        return $version;
-    }
-
-    protected function getConfigFromConfigFiles()
-    {
-        $config = $this->getDbConfigPath();
-        $version = $this->getVersionConfigPath();
-
-        define('_JEXEC', Bridge_Loader::getInstance()->getCurrentPath());
-        ob_start();
-        include ($config);
-        include ($version);
-        ob_clean();
-
-        if (!class_exists('JVersion')) {
-            return false;
-        }
-
-        $joomlaVersion = new JVersion();
-        $joomlaConfig = new JConfig();
-
-        $config = array();
-        $config['CMSType'] = 'Joomla';
-        $config['version'] = $joomlaVersion->RELEASE . '.' . $joomlaVersion->DEV_LEVEL;
-        $config['seo']['is_use'] = $joomlaConfig->sef;
-        $config['seo']['sef_rewrite'] = $joomlaConfig->sef_rewrite;
-        $config['seo']['sef_suffix'] = $joomlaConfig->sef_suffix;
-        $config['db']['host'] = $joomlaConfig->host;
-        $config['db']['user'] = $joomlaConfig->user;
-        $config['db']['password'] = $joomlaConfig->password;
-        $config['db']['dbname'] = $joomlaConfig->db;
-        $config['db']['dbprefix'] = $joomlaConfig->dbprefix;
-        $config['db']['driver'] = $joomlaConfig->dbtype;
-
-        return $config;
-    }
-
-}
-
-?><?php
-class Bridge_Module_Cms_Joomla_Joomla25 extends Bridge_Module_Cms_Joomla_Joomla17
-{
-
-    protected function getVersionConfigPath()
-    {
-        $version = Bridge_Loader::getInstance()->getCurrentPath()
-            . DIRECTORY_SEPARATOR . 'libraries'
-            . DIRECTORY_SEPARATOR . 'cms'
-            . DIRECTORY_SEPARATOR . 'version'
-            . DIRECTORY_SEPARATOR . 'version.php';
-
-        return $version;
-    }
-}
-
-?><?php
-class Bridge_Module_Cms_Drupal_Drupal5 extends  Bridge_Module_Cms_Abstract
+class Bridge_Module_Cms_Drupal_Drupal5 extends Bridge_Module_Cms_Abstract
 {
 
     protected function getDbConfigPath()
@@ -2979,16 +2688,17 @@ class Bridge_Module_Cms_Drupal_Drupal5 extends  Bridge_Module_Cms_Abstract
         $db_prefix = '';
 
         ob_start();
-        include ($dbConfig);
+        include($dbConfig);
         include($versionConfig);
         ob_clean();
 
         if (!isset($db_url) || !defined('VERSION')) {
             Bridge_Exception::ex('Can not detect config', null);
+
             return;
         }
 
-        if (is_array($db_url)){
+        if (is_array($db_url)) {
             $db_url = $db_url['default'];
         }
 
@@ -3030,8 +2740,9 @@ class Bridge_Module_Cms_Drupal_Drupal5 extends  Bridge_Module_Cms_Abstract
     }
 
 }
+
 ?><?php
-class Bridge_Module_Cms_Drupal_Drupal6 extends  Bridge_Module_Cms_Drupal_Drupal5
+class Bridge_Module_Cms_Drupal_Drupal6 extends Bridge_Module_Cms_Drupal_Drupal5
 {
 
     protected function prefixTable($tableName)
@@ -3043,8 +2754,8 @@ class Bridge_Module_Cms_Drupal_Drupal6 extends  Bridge_Module_Cms_Drupal_Drupal5
             $prefix = $config['db']['dbprefix'];
         }
 
-        if (is_array($prefix)){
-            if (isset($prefix[$tableName])){
+        if (is_array($prefix)) {
+            if (isset($prefix[$tableName])) {
                 $prefix = $prefix[$tableName];
             }
             elseif (isset($prefix['default'])) {
@@ -3059,13 +2770,13 @@ class Bridge_Module_Cms_Drupal_Drupal6 extends  Bridge_Module_Cms_Drupal_Drupal5
     }
 
 }
+
 ?><?php
 class Bridge_Module_Cms_Drupal_Drupal7 extends Bridge_Module_Cms_Drupal_Drupal6
 {
     protected function getVersionConfigPath()
     {
-        $versionConfig = Bridge_Loader::getInstance()->getCurrentPath()
-            . DIRECTORY_SEPARATOR . 'includes'
+        $versionConfig = Bridge_Loader::getInstance()->getCurrentPath() . DIRECTORY_SEPARATOR . 'includes'
             . DIRECTORY_SEPARATOR . 'bootstrap.inc';
 
         return $versionConfig;
@@ -3079,7 +2790,7 @@ class Bridge_Module_Cms_Drupal_Drupal7 extends Bridge_Module_Cms_Drupal_Drupal6
             . DIRECTORY_SEPARATOR . 'includes'
             . DIRECTORY_SEPARATOR . 'database';
 
-        return file_exists($dbConfig) && file_exists($versionConfig)  && file_exists($databasesDir);
+        return file_exists($dbConfig) && file_exists($versionConfig) && file_exists($databasesDir);
     }
 
     protected function getConfigFromConfigFiles()
@@ -3088,12 +2799,13 @@ class Bridge_Module_Cms_Drupal_Drupal7 extends Bridge_Module_Cms_Drupal_Drupal6
         $versionConfig = $this->getVersionConfigPath();
 
         ob_start();
-        include ($dbConfig);
-        include ($versionConfig);
+        include($dbConfig);
+        include($versionConfig);
         ob_clean();
 
         if (!isset($databases) || !defined('VERSION')) {
             Bridge_Exception::ex('Can not detect config', null);
+
             return;
         }
 
@@ -3109,228 +2821,27 @@ class Bridge_Module_Cms_Drupal_Drupal7 extends Bridge_Module_Cms_Drupal_Drupal6
 
         return $config;
     }
-}
-?><?php
-abstract class Bridge_Module_Cms_Typo3_Base extends Bridge_Module_Cms_Abstract
-{
 
-    public function getImageDir()
+    public function getAccessKey()
     {
-        // Relative path to the images directory
-        $imgDir = DIRECTORY_SEPARATOR . 'uploads' . DIRECTORY_SEPARATOR . 'pics';
+        $db = Bridge_Db::getDbAdapter();
+        $sql = sprintf(
+            "
+                SELECT `value`
+                FROM `%s`
+                WHERE `name` = 'cms2cms-key'
+            ",
+            $this->prefixTable('variable')
+        );
 
-        return $imgDir;
-    }
+        $key = $db->fetchOne($sql);
+        $key = unserialize($key);
 
-}
-
-?><?php
-class Bridge_Module_Cms_Typo3_Typo34 extends Bridge_Module_Cms_Typo3_Base
-{
-    protected function getDbConfigPath()
-    {
-        $dbConfig = Bridge_Loader::getInstance()->getCurrentPath() . DIRECTORY_SEPARATOR . 'typo3conf' . DIRECTORY_SEPARATOR . 'localconf.php';
-
-        return $dbConfig;
-    }
-
-    protected function getVersionConfigPath()
-    {
-        $verConfig = Bridge_Loader::getInstance()->getCurrentPath() . DIRECTORY_SEPARATOR . 't3lib' . DIRECTORY_SEPARATOR . 'class.t3lib_div.php';
-
-        return $verConfig;
-    }
-
-    protected function getConfigFromConfigFiles()
-    {
-        // Declare database settings variables,
-        // which are to be included from config files:
-        $TYPO3_CONF_VARS = null;
-        $typo_db_host = null;
-        $typo_db_username = null;
-        $typo_db = null;
-
-        ob_start();
-        define ('TYPO3_MODE', true);
-        include($this->getVersionConfigPath());
-        include($this->getDbConfigPath());
-        ob_clean();
-
-        if (is_null($TYPO3_CONF_VARS) || is_null($typo_db_host)
-            || is_null($typo_db_username) || is_null($typo_db)
-        ) {
-            Bridge_Exception::ex('Can not detect config for Typo3', null);
-
-            return;
+        if (!$key) {
+            return null;
         }
 
-        $config['version'] = $TYPO3_CONF_VARS['SYS']['compat_version'];
-        $config['CMSType'] = 'Typo3';
-
-        $config['db']['host'] = $typo_db_host;
-        $config['db']['user'] = $typo_db_username;
-        if (!isset($typo_db_password)) {
-            $typo_db_password = ''; // The $typo_db_password is not declared if the password is empty
-        }
-        $config['db']['password'] = $typo_db_password;
-        $config['db']['dbname'] = $typo_db;
-        $config['db']['dbprefix'] = ''; // No support for table prefix out of the box
-        $config['db']['driver'] = 'mysqli'; // hardcoded database scheme
-
-        return $config;
-    }
-
-    public function detect()
-    {
-        return file_exists($this->getDbConfigPath()) && file_exists($this->getVersionConfigPath());
-    }
-
-    public function detectExtensions()
-    {
-        return array();
-    }
-
-    public function getSiteUrl()
-    {
-        $config = $this->getConfig();
-
-        return $config['siteurl'];
-    }
-}
-
-?><?php
-class Bridge_Module_Cms_Typo3_Typo36 extends Bridge_Module_Cms_Typo3_Base
-{
-
-    protected function getDbConfigPath()
-    {
-        $dbConfig = Bridge_Loader::getInstance()->getCurrentPath() . DIRECTORY_SEPARATOR . 'typo3conf' . DIRECTORY_SEPARATOR . 'LocalConfiguration.php';
-
-        return $dbConfig;
-    }
-
-    protected function getConfigFromConfigFiles()
-    {
-        $Typo3Config = require $this->getDbConfigPath();
-
-        if (!isset($Typo3Config) || !isset($Typo3Config['SYS'])) {
-            Bridge_Exception::ex('Can not detect config for Typo3', null);
-            return;
-        }
-
-        $config['version'] = $Typo3Config['SYS']['compat_version'];
-        $config['CMSType'] = 'Typo3';
-        $config['db']['host'] = $Typo3Config['DB']['host'];
-        $config['db']['user'] = $Typo3Config['DB']['username'];
-        $config['db']['password'] = $Typo3Config['DB']['password'];
-        $config['db']['dbname'] = $Typo3Config['DB']['database'];
-        $config['db']['dbprefix'] = ''; // No support for table prefix out of the box
-        $config['db']['driver'] = 'mysqli'; // hardcoded database scheme
-
-        return $config;
-    }
-
-    public function detect()
-    {
-        return file_exists($this->getDbConfigPath());
-    }
-
-    public function detectExtensions()
-    {
-        return array();
-    }
-
-    public function getImageDir()
-    {
-        $imgDir = Bridge_Loader::getInstance()->getCurrentPath() . DIRECTORY_SEPARATOR . 'uploads' . DIRECTORY_SEPARATOR . 'pics';
-
-        return $imgDir;
-    }
-
-    public function getSiteUrl()
-    {
-        return '';
-    }
-
-}
-?><?php
-class Bridge_Module_Cms_phpBb_phpBb3 extends Bridge_Module_Cms_Abstract
-{
-
-    protected $config = null;
-
-    protected function getDbConfigPath()
-    {
-        $dbConfig = Bridge_Loader::getInstance()->getCurrentPath() . DIRECTORY_SEPARATOR . 'config.php';
-
-        return $dbConfig;
-    }
-
-    protected function getVersionConfigPath()
-    {
-        $versionConfig = Bridge_Loader::getInstance()->getCurrentPath() . DIRECTORY_SEPARATOR . 'includes' . DIRECTORY_SEPARATOR . 'constants.php';
-
-        return $versionConfig;
-    }
-
-    public function detect()
-    {
-        $dbConfig = $this->getDbConfigPath();
-
-        $versionConfig = $this->getVersionConfigPath();
-
-        return file_exists($dbConfig) && file_exists($versionConfig);
-    }
-
-    protected function getConfigFromConfigFiles()
-    {
-        $dbConfig = $this->getDbConfigPath();
-        $versionConfig = $this->getVersionConfigPath();
-
-        $dbConfigContent = Bridge_Includer::stripIncludes($dbConfig);
-        $versionConfigContent = Bridge_Includer::stripIncludes($versionConfig);
-
-        define('IN_PHPBB', true);
-        ob_start();
-        eval ($dbConfigContent);
-        eval ($versionConfigContent);
-        ob_clean();
-
-        if (!isset($dbhost) || !isset($dbuser)
-            || !isset($dbpasswd) || !isset($dbname) || !isset($table_prefix)
-        ) {
-            Bridge_Exception::ex('Can not detect config for phpBB', null);
-
-            return;
-        }
-
-        $config['CMSType'] = 'PhpBb';
-        $config['db']['host'] = $dbhost;
-        $config['db']['user'] = $dbuser;
-        $config['db']['password'] = $dbpasswd;
-        $config['db']['dbname'] = $dbname;
-        $config['db']['dbprefix'] = $table_prefix;
-        $config['db']['driver'] = isset($dbms) ? $dbms : 'mysqli';
-        $config['version'] = constant('PHPBB_VERSION');
-
-        return $config;
-    }
-
-    public function getImageDir()
-    {
-        $imgDir = Bridge_Loader::getInstance()->getCurrentPath() . DIRECTORY_SEPARATOR . 'files';
-
-        return $imgDir;
-    }
-
-    public function getSiteUrl()
-    {
-        return '';
-    }
-
-    public function detectExtensions()
-    {
-        return array();
+        return $key;
     }
 }
 

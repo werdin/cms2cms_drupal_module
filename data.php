@@ -40,7 +40,7 @@ class CmsPluginData
     public function getBridgeUrl()
     {
 
-        return drupal_get_path('module', 'cms2cms');
+        return '/' . drupal_get_path('module', 'cms2cms');
     }
 
     public function getAuthData()
